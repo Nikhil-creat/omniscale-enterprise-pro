@@ -14,7 +14,16 @@
 [**Live project page →**](https://nikhil-creat.github.io/omniscale-enterprise-pro/) · [Quick start](#quick-start-docker) · [Architecture](#architecture) · [API reference](#api-reference)
 
 </div>
+---
+## Designed and Developed by 
+# **NIKHIL CHARY SRIRAMOJU**
+BTech CSE (Final Year)
 
+- GitHub: [Nikhil-creat](https://github.com/Nikhil-creat)
+- LinkedIn: [nikhil-chary-sriramoju](https://in.linkedin.com/in/nikhil-chary-sriramoju-95041b38a)
+- Email: sriramojunikhil66@gmail.com
+- Instagram: [@nikhil__sriramoju](https://www.instagram.com/nikhil__sriramoju)
+- Facebook: [Profile](https://www.facebook.com/profile.php?id=100079201124141)
 ---
 
 ## What this is
