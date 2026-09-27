@@ -25,7 +25,11 @@
   html{scroll-behavior:smooth}
   body{
     margin:0;
-    background:var(--bg);
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(230,162,60,0.06), transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.012) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.012) 40px),
+      var(--bg);
     color:var(--text);
     font-family:'Inter',-apple-system,sans-serif;
     line-height:1.6;
@@ -125,6 +129,99 @@
   }
 
   /* ---------- SECTIONS ---------- */
+  /* ---------- STATS STRIP ---------- */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:28px;
+  }
+  .stat{
+    padding:16px 14px;
+    border-left:1px solid var(--line);
+    background:var(--panel);
+  }
+  .stat:first-child{border-left:none}
+  .stat b{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:22px;
+    color:var(--accent);
+    font-weight:500;
+  }
+  .stat span{
+    display:block;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+  @media (max-width:640px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat:nth-child(3){border-left:none}
+  }
+
+  /* ---------- DOSSIER (built-by) ---------- */
+  .dossier{
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:linear-gradient(160deg, var(--panel) 0%, var(--panel-2) 100%);
+    padding:32px;
+    display:grid;
+    grid-template-columns:1fr 1.4fr;
+    gap:32px;
+  }
+  .dossier-id{border-right:1px solid var(--line);padding-right:32px}
+  .dossier-id .role{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--accent);
+    margin-bottom:10px;
+  }
+  .dossier-id h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:24px;
+    margin:0 0 6px;
+    line-height:1.2;
+  }
+  .dossier-id .edu{
+    font-size:13.5px;
+    color:var(--muted);
+    margin-bottom:20px;
+  }
+  .dossier-links{display:flex;flex-direction:column;gap:9px}
+  .dossier-links a{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .dossier-links a::before{content:"→";color:var(--accent)}
+  .dossier-body h4{
+    font-size:11.5px;
+    text-transform:none;
+    color:var(--muted-2);
+    font-family:'JetBrains Mono',monospace;
+    margin:0 0 10px;
+  }
+  .cred-list{list-style:none;margin:0 0 22px;padding:0}
+  .cred-list li{
+    font-size:13.5px;
+    color:var(--text);
+    padding:8px 0;
+    border-top:1px solid var(--line);
+  }
+  .cred-list li:first-child{border-top:none;padding-top:0}
+  .cred-list .meta{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  @media (max-width:700px){
+    .dossier{grid-template-columns:1fr}
+    .dossier-id{border-right:none;border-bottom:1px solid var(--line);padding-right:0;padding-bottom:24px}
+  }
+
   section{padding:56px 0;border-top:1px solid var(--line)}
   .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap}
   h2{
@@ -253,6 +350,7 @@
       <a href="#capabilities">Capabilities</a>
       <a href="#architecture">Architecture</a>
       <a href="#stack">Stack</a>
+      <a href="#built-by">Built by</a>
       <a href="#start">Run it</a>
       <a href="https://github.com/Nikhil-creat/omniscale-enterprise-pro">Source</a>
     </nav>
@@ -318,6 +416,14 @@
         <circle class="pulse p2" r="3.5"><animateMotion dur="4.5s" repeatCount="indefinite" begin="1.5s" path="M 460 40 C 520 40, 520 40, 580 40"/></circle>
         <circle class="pulse p3" r="3.5"><animateMotion dur="4.5s" repeatCount="indefinite" begin="3s" path="M 700 40 C 760 40, 760 95, 740 95"/></circle>
       </svg>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>16</b><span>API endpoints</span></div>
+      <div class="stat"><b>6</b><span>relational tables</span></div>
+      <div class="stat"><b>5</b><span>queued/scheduled tasks</span></div>
+      <div class="stat"><b>18</b><span>automated tests</span></div>
+      <div class="stat"><b>~2.0k</b><span>backend LOC</span></div>
     </div>
   </section>
 
@@ -428,6 +534,37 @@ docker compose up --build
 <span class="c"># backend  → </span><span class="g">http://localhost:8000/docs</span>
 <span class="c"># frontend → </span><span class="g">http://localhost:3000</span>
 <span class="c"># flower   → </span><span class="g">http://localhost:5555</span></pre>
+  </section>
+  <section id="built-by">
+    <div class="section-head">
+      <h2>Built by</h2>
+      <span class="section-note">single-author build</span>
+    </div>
+    <div class="dossier">
+      <div class="dossier-id">
+        <div class="role">// designed and developed by</div>
+        <h3>Nikhil Chary Sriramoju</h3>
+        <div class="edu">B.Tech, Computer Science &amp; Engineering<br>Vaagdevi College of Engineering — final year</div>
+        <div class="dossier-links">
+          <a href="https://github.com/Nikhil-creat">github.com/Nikhil-creat</a>
+          <a href="https://in.linkedin.com/in/nikhil-chary-sriramoju-95041b38a">linkedin.com/in/nikhil-chary-sriramoju</a>
+          <a href="mailto:sriramojunikhil66@gmail.com">sriramojunikhil66@gmail.com</a>
+        </div>
+      </div>
+      <div class="dossier-body">
+        <h4>// certifications</h4>
+        <ul class="cred-list">
+          <li>NASSCOM / Skill India Digital Hub<span class="meta">AI-Data Engineering &amp; Cloud Infrastructure Analyst</span></li>
+          <li>IBM SkillsBuild<span class="meta">AI Fundamentals</span></li>
+          <li>Reliance Foundation<span class="meta">AI/ML Engineer Foundation</span></li>
+        </ul>
+        <h4>// experience</h4>
+        <ul class="cred-list">
+          <li>Machine Learning Engineer Intern — Yuva Intern (NSDC)<span class="meta">Aug – Sep 2026</span></li>
+          <li>Data Analytics Intern — Thiranex<span class="meta">Jul – Aug 2026</span></li>
+        </ul>
+      </div>
+    </div>
   </section>
 
 </main>
