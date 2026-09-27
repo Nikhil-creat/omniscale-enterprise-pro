@@ -9,7 +9,7 @@ concurrent multi-worker load.
 from __future__ import annotations
 
 import redis.asyncio as aioredis
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import HTTPException, Request, status
 
 from backend.config import get_settings
 from backend.models import SubscriptionTier, User
