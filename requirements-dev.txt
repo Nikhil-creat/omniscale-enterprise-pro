@@ -1,0 +1,6 @@
+# OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
+# Installed on top of requirements.txt for local dev / CI test runs.
+-r requirements.txt
+aiosqlite==0.20.0
+ruff==0.6.9
+mypy==1.11.2

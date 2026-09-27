@@ -1,0 +1,24 @@
+# OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.db
+data/vector_index/
+data/cnn_weights/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+celerybeat-schedule*
+celerybeat.pid
+.pre-commit-cache/
+
+node_modules/
+.next/
+frontend/out/
+npm-debug.log*
+
+.DS_Store
+*.log

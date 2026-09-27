@@ -1,0 +1,26 @@
+# OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
+# Celery worker image — shares the backend dependency set.
+
+FROM python:3.11-slim AS builder
+WORKDIR /build
+ENV PIP_NO_CACHE_DIR=1
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc \
+    && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --user -r requirements.txt
+
+FROM python:3.11-slim AS runtime
+LABEL maintainer="NIKHIL CHARY SRIRAMOJU"
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH=/root/.local/bin:$PATH
+RUN apt-get update && apt-get install -y --no-install-recommends libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /root/.local /root/.local
+COPY backend ./backend
+
+RUN useradd --create-home --uid 1000 omniscale && \
+    mkdir -p /app/data/vector_index /app/data/cnn_weights && \
+    chown -R omniscale:omniscale /app
+USER omniscale
+
+CMD ["celery", "-A", "backend.celery_app", "worker", "--loglevel=info", "-Q", "default,cnn,rag", "--concurrency=2"]

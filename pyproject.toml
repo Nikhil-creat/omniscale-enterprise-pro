@@ -1,0 +1,12 @@
+# OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+exclude = ["backend/alembic/versions", "frontend"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]  # long lines in docstrings/comments are fine; code wraps via formatter
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend"]

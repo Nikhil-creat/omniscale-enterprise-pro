@@ -1,0 +1,9 @@
+.venv
+__pycache__
+*.pyc
+.git
+.pytest_cache
+tests
+*.db
+frontend/node_modules
+frontend/.next

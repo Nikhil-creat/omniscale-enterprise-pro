@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>OmniScale Enterprise Pro — Multi-Tenant AI SaaS Architecture</title>
+<meta name="description" content="Autonomous agentic routing, PyTorch CNN vision, FAISS RAG, Celery/Redis pipelines, Stripe billing — a full production-shaped AI SaaS platform by Nikhil Chary Sriramoju." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D12;
+    --panel:#12161D;
+    --panel-2:#161B23;
+    --line:#232A35;
+    --text:#E4E7EC;
+    --muted:#7C8598;
+    --muted-2:#4E5768;
+    --accent:#E6A23C;
+    --accent-dim:#7A5A26;
+    --ok:#5FA88A;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent-dim);color:#fff}
+
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
+
+  header.top{
+    border-bottom:1px solid var(--line);
+    padding:20px 0;
+  }
+  .topbar{display:flex;justify-content:space-between;align-items:center}
+  .mark{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+  .mark b{color:var(--text);font-weight:500}
+  .toplinks{display:flex;gap:22px;font-size:13px}
+  .toplinks a{color:var(--muted);text-decoration:none}
+  .toplinks a:hover{color:var(--text)}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:72px 0 40px}
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--accent);
+    margin-bottom:18px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(34px,5.4vw,54px);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin:0 0 22px;
+    max-width:14ch;
+  }
+  .lede{
+    font-size:17px;
+    color:var(--muted);
+    max-width:56ch;
+    margin:0 0 34px;
+  }
+  .lede code{
+    font-family:'JetBrains Mono',monospace;
+    font-size:14.5px;
+    color:var(--text);
+    background:var(--panel-2);
+    padding:1px 6px;
+    border-radius:4px;
+    border:1px solid var(--line);
+  }
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:11px 20px;
+    border-radius:6px;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid transparent;
+  }
+  .btn.primary{background:var(--accent);color:#171006}
+  .btn.primary:hover{background:#f0ad50}
+  .btn.ghost{border-color:var(--line);color:var(--text)}
+  .btn.ghost:hover{border-color:var(--muted-2)}
+
+  /* ---------- FLOW DIAGRAM ---------- */
+  .flow-shell{
+    margin-top:52px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:10px;
+    padding:28px 20px 22px;
+    overflow-x:auto;
+  }
+  .flow-caption{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--muted-2);
+    margin-bottom:16px;
+  }
+  svg#flow{display:block;min-width:640px;width:100%;height:auto}
+  .flow-node rect{fill:var(--panel-2);stroke:var(--line);stroke-width:1}
+  .flow-node text{fill:var(--text);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600}
+  .flow-node .sub{fill:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:400}
+  .flow-edge{stroke:var(--line);stroke-width:1.5;fill:none}
+  .pulse{
+    fill:var(--accent);
+    filter:drop-shadow(0 0 5px var(--accent));
+  }
+  @media (prefers-reduced-motion:reduce){
+    .pulse{display:none}
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:56px 0;border-top:1px solid var(--line)}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap}
+  h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:26px;
+    margin:0;
+  }
+  .section-note{font-size:13px;color:var(--muted-2);font-family:'JetBrains Mono',monospace}
+
+  /* spec rows, not cards */
+  .spec-row{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:24px;
+    padding:20px 0;
+    border-top:1px solid var(--line);
+  }
+  .spec-row:first-of-type{border-top:none}
+  .spec-name{font-weight:600;font-size:15px}
+  .spec-name .tag{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:400;
+    font-size:11px;
+    color:var(--accent);
+    margin-top:5px;
+  }
+  .spec-desc{font-size:14.5px;color:var(--muted);max-width:56ch}
+  @media (max-width:640px){
+    .spec-row{grid-template-columns:1fr;gap:8px}
+  }
+
+  /* stack strip */
+  .stack{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    background:var(--panel);
+    padding:7px 12px;
+    border-radius:6px;
+  }
+
+  /* architecture ascii-ish diagram */
+  .arch{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:10px;
+    padding:24px;
+  }
+  .arch-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .arch-box{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px;
+    background:var(--panel-2);
+  }
+  .arch-box h4{
+    margin:0 0 8px;
+    font-size:13.5px;
+    font-weight:600;
+  }
+  .arch-box p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--muted);
+    font-family:'JetBrains Mono',monospace;
+    line-height:1.55;
+  }
+  @media (max-width:640px){ .arch-grid{grid-template-columns:1fr} }
+
+  /* setup */
+  pre{
+    background:#0D1117;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px 20px;
+    overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    line-height:1.7;
+    color:#C9D1D9;
+  }
+  pre .c{color:var(--muted-2)}
+  pre .g{color:var(--ok)}
+
+  /* honest notes */
+  .note{
+    border-left:2px solid var(--accent);
+    padding:4px 0 4px 18px;
+    font-size:14px;
+    color:var(--muted);
+    margin:14px 0;
+  }
+  .note b{color:var(--text)}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:32px 0 60px;
+    font-size:13px;
+    color:var(--muted-2);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap topbar">
+    <div class="mark"><b>OmniScale</b> Enterprise Pro</div>
+    <nav class="toplinks">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#stack">Stack</a>
+      <a href="#start">Run it</a>
+      <a href="https://github.com/Nikhil-creat/omniscale-enterprise-pro">Source</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" style="border-top:none;padding-top:72px">
+    <div class="kicker">// multi-tenant AI SaaS reference architecture</div>
+    <h1>One request, three ways to answer.</h1>
+    <p class="lede">
+      OmniScale routes every request through an autonomous agent that decides, per call,
+      whether the answer lives in your documents (<code>rag</code>), an uploaded image
+      (<code>cnn</code>), or a direct model completion (<code>chat</code>) — then bills,
+      queues, and observes the whole thing like a real product would have to.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/Nikhil-creat/omniscale-enterprise-pro">View source →</a>
+      <a class="btn ghost" href="#architecture">See the architecture</a>
+    </div>
+
+    <div class="flow-shell">
+      <div class="flow-caption">fig. 1 — request lifecycle, live</div>
+      <svg id="flow" viewBox="0 0 860 190" xmlns="http://www.w3.org/2000/svg">
+        <path id="path1" class="flow-edge" d="M 120 40 C 220 40, 220 40, 300 40 L 380 40"/>
+        <path id="path2" class="flow-edge" d="M 460 40 C 520 40, 520 95, 580 95 M 460 40 C 520 40, 520 40, 580 40 M 460 40 C 520 40, 520 150, 580 150"/>
+        <path id="path3a" class="flow-edge" d="M 700 40 C 760 40, 760 95, 800 95"/>
+        <path id="path3b" class="flow-edge" d="M 700 95 L 800 95"/>
+        <path id="path3c" class="flow-edge" d="M 700 150 C 760 150, 760 95, 800 95"/>
+
+        <g class="flow-node">
+          <rect x="20" y="18" width="100" height="44" rx="6"/>
+          <text x="70" y="36" text-anchor="middle">Client</text>
+          <text class="sub" x="70" y="50" text-anchor="middle">POST /agent</text>
+        </g>
+
+        <g class="flow-node">
+          <rect x="380" y="18" width="80" height="44" rx="6"/>
+          <text x="420" y="36" text-anchor="middle">Router</text>
+          <text class="sub" x="420" y="50" text-anchor="middle">classify</text>
+        </g>
+
+        <g class="flow-node">
+          <rect x="580" y="20" width="120" height="38" rx="6"/>
+          <text x="640" y="43" text-anchor="middle" style="font-size:11.5px">RAG · FAISS</text>
+        </g>
+        <g class="flow-node">
+          <rect x="580" y="76" width="120" height="38" rx="6"/>
+          <text x="640" y="99" text-anchor="middle" style="font-size:11.5px">CNN · ResNet</text>
+        </g>
+        <g class="flow-node">
+          <rect x="580" y="131" width="120" height="38" rx="6"/>
+          <text x="640" y="154" text-anchor="middle" style="font-size:11.5px">Chat · Groq/Gemini</text>
+        </g>
+
+        <g class="flow-node">
+          <rect x="740" y="76" width="100" height="38" rx="6"/>
+          <text x="790" y="99" text-anchor="middle" style="font-size:11.5px">Response</text>
+        </g>
+
+        <circle class="pulse p1" r="3.5"><animateMotion dur="4.5s" repeatCount="indefinite" path="M 120 40 L 380 40"/></circle>
+        <circle class="pulse p2" r="3.5"><animateMotion dur="4.5s" repeatCount="indefinite" begin="1.5s" path="M 460 40 C 520 40, 520 40, 580 40"/></circle>
+        <circle class="pulse p3" r="3.5"><animateMotion dur="4.5s" repeatCount="indefinite" begin="3s" path="M 700 40 C 760 40, 760 95, 740 95"/></circle>
+      </svg>
+    </div>
+  </section>
+
+  <section id="capabilities">
+    <div class="section-head">
+      <h2>What it actually does</h2>
+      <span class="section-note">6 core systems</span>
+    </div>
+
+    <div class="spec-row">
+      <div class="spec-name">Autonomous agent router<span class="tag">backend/agent.py</span></div>
+      <div class="spec-desc">Classifies each prompt into RAG, CNN, or chat before answering, and grounds RAG answers only in retrieved chunks — never lets the model improvise over missing context.</div>
+    </div>
+    <div class="spec-row">
+      <div class="spec-name">Dynamic LLM provider<span class="tag">Groq ⇄ Gemini</span></div>
+      <div class="spec-desc">Resolves Groq or Gemini at runtime from whichever API key is present — no code change to swap providers, no dead branches for the unused one.</div>
+    </div>
+    <div class="spec-row">
+      <div class="spec-name">RAG retrieval engine<span class="tag">FAISS + sentence-transformers</span></div>
+      <div class="spec-desc">Per-user vector namespaces persisted to disk, chunked with overlap, cosine-similarity search — survives worker restarts, not held only in memory.</div>
+    </div>
+    <div class="spec-row">
+      <div class="spec-name">Computer vision pipeline<span class="tag">PyTorch · ResNet18</span></div>
+      <div class="spec-desc">Transfer-learning classification plus a 512-d pooled feature vector, run off the request path entirely — image analysis is a polled background job, not a blocking call.</div>
+    </div>
+    <div class="spec-row">
+      <div class="spec-name">Metered billing<span class="tag">Stripe Checkout + webhooks</span></div>
+      <div class="spec-desc">Signature-verified, idempotent webhook handling with a permanent audit log of every financial event — tier changes, renewals, and failures all reconcile automatically.</div>
+    </div>
+    <div class="spec-row">
+      <div class="spec-name">Tiered rate limiting<span class="tag">Redis fixed-window</span></div>
+      <div class="spec-desc">Limits scale with subscription tier and enforce atomically under concurrent load, so free-tier abuse can't starve paying tenants.</div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="section-head">
+      <h2>System layout</h2>
+      <span class="section-note">async everywhere it matters</span>
+    </div>
+    <div class="arch">
+      <div class="arch-grid">
+        <div class="arch-box">
+          <h4>Next.js dashboard</h4>
+          <p>auth · agent console<br>document upload · vision jobs<br>billing + usage metrics</p>
+        </div>
+        <div class="arch-box">
+          <h4>FastAPI backend</h4>
+          <p>JWT + API-key auth<br>agent router · rate limiter<br>Stripe checkout/webhooks</p>
+        </div>
+        <div class="arch-box">
+          <h4>Celery + Redis</h4>
+          <p>CNN inference queue<br>RAG ingest queue<br>webhook delivery w/ retries</p>
+        </div>
+        <div class="arch-box">
+          <h4>PostgreSQL + Alembic</h4>
+          <p>users · subscriptions<br>audit_logs · inference_jobs<br>versioned migrations</p>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <b>On payouts:</b> Stripe auto-settles to your bank on your dashboard's own schedule.
+      This project implements standard Checkout + webhook billing correctly rather than
+      calling the Payouts API directly — that endpoint is for Connect marketplaces
+      disbursing <i>other people's</i> funds, not a SaaS billing its own users.
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="section-head">
+      <h2>Stack</h2>
+    </div>
+    <div class="stack">
+      <span class="chip">FastAPI</span>
+      <span class="chip">Pydantic v2</span>
+      <span class="chip">SQLAlchemy 2.0 async</span>
+      <span class="chip">PostgreSQL</span>
+      <span class="chip">Alembic</span>
+      <span class="chip">Celery</span>
+      <span class="chip">Redis</span>
+      <span class="chip">PyTorch</span>
+      <span class="chip">torchvision</span>
+      <span class="chip">FAISS</span>
+      <span class="chip">sentence-transformers</span>
+      <span class="chip">Groq API</span>
+      <span class="chip">Google Gemini</span>
+      <span class="chip">Stripe</span>
+      <span class="chip">Next.js</span>
+      <span class="chip">Sentry</span>
+      <span class="chip">Prometheus</span>
+      <span class="chip">Docker Compose</span>
+      <span class="chip">GitHub Actions</span>
+      <span class="chip">PyTest</span>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="section-head">
+      <h2>Run it</h2>
+      <span class="section-note">docker compose, one command</span>
+    </div>
+    <pre><span class="c"># 1. configure</span>
+cp .env.example .env   <span class="c"># add GROQ_API_KEY or GEMINI_API_KEY, Stripe test keys</span>
+
+<span class="c"># 2. launch the full stack</span>
+docker compose up --build
+
+<span class="c"># backend  → </span><span class="g">http://localhost:8000/docs</span>
+<span class="c"># frontend → </span><span class="g">http://localhost:3000</span>
+<span class="c"># flower   → </span><span class="g">http://localhost:5555</span></pre>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>Designed and developed by Nikhil Chary Sriramoju</span>
+  <span><a href="https://github.com/Nikhil-creat/omniscale-enterprise-pro">github.com/Nikhil-creat/omniscale-enterprise-pro</a></span>
+</footer>
+
+</body>
+</html>
