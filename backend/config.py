@@ -88,6 +88,20 @@ class Settings(BaseSettings):
             self.CELERY_RESULT_BACKEND = self.REDIS_URL
         return self
 
+    @model_validator(mode="after")
+    def _normalize_database_url(self) -> "Settings":
+        """Managed Postgres providers (Render, Railway, Heroku-style) hand out
+        a plain `postgresql://` or `postgres://` connection string. The async
+        engine needs an explicit `+asyncpg` driver, so normalize it here once
+        rather than requiring every deploy target to know that detail."""
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        self.DATABASE_URL = url
+        return self
+
     @property
     def active_llm_provider(self) -> LLMProvider:
         """Groq is preferred for latency; Gemini is the automatic fallback."""

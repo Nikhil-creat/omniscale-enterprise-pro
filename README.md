@@ -112,6 +112,49 @@ docker compose up --build
 | Flower (Celery monitor) | http://localhost:5555 |
 | Prometheus metrics | http://localhost:8000/metrics |
 
+## Production deployment
+
+**The backend cannot run on Vercel.** Vercel is a serverless platform — it can't host
+long-running Celery workers/Beat, and PyTorch + FAISS alone exceed its function size limit.
+The correct split:
+
+| Piece | Host | Why |
+|---|---|---|
+| `frontend/` (Next.js dashboard) | **Vercel** | Exactly what Vercel is built for |
+| `backend/` + Celery worker + Celery Beat + Postgres + Redis | **Render** (or Railway/Fly.io) | Needs persistent processes + real disk/memory |
+
+### Deploy the backend (Render)
+
+This repo includes `render.yaml` — a Blueprint that provisions the API, worker, Beat,
+managed Postgres, and managed Redis together, wired to each other automatically:
+
+1. Render dashboard → **New → Blueprint** → select this GitHub repo
+2. Fill in the prompted secrets (`GROQ_API_KEY` or `GEMINI_API_KEY`, Stripe keys, etc. —
+   see `.env.example` for the full list). `DATABASE_URL`/`REDIS_URL` are wired automatically —
+   don't set those by hand.
+3. Deploy. Note the resulting backend URL (e.g. `https://omniscale-backend.onrender.com`).
+4. **Important:** the free tier's 512MB won't reliably run CNN inference (PyTorch + a loaded
+   ResNet18 need more headroom) — use at least the Starter plan for `omniscale-worker`.
+
+### Deploy the frontend (Vercel)
+
+1. Vercel dashboard → **Add New → Project** → select this repo, set **root directory to `frontend/`**
+2. Project Settings → Environment Variables → add:
+   ```
+   NEXT_PUBLIC_API_BASE_URL = https://your-backend.onrender.com
+   ```
+3. Deploy. Vercel auto-detects Next.js — `frontend/vercel.json` is already configured.
+4. Go back to Render and set these on `omniscale-backend` (they couldn't be set until you
+   had the Vercel URL):
+   ```
+   ALLOWED_ORIGINS = https://your-app.vercel.app
+   FRONTEND_SUCCESS_URL = https://your-app.vercel.app/billing/success
+   FRONTEND_CANCEL_URL = https://your-app.vercel.app/billing/cancel
+   ```
+5. In Stripe Dashboard → Webhooks, point the endpoint at
+   `https://your-backend.onrender.com/api/v1/billing/webhook` and copy the signing secret
+   into Render's `STRIPE_WEBHOOK_SECRET`.
+
 ## Local development
 
 ```bash

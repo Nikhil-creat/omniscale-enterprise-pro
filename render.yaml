@@ -1,0 +1,116 @@
+# OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
+#
+# Render Blueprint — deploys the backend API, Celery worker, Celery Beat,
+# managed PostgreSQL, and managed Redis as one connected stack.
+#
+# Usage:
+#   1. Push this repo to GitHub (already done)
+#   2. In Render: New → Blueprint → select this repo → Render reads this file
+#   3. Fill in the secret env vars it prompts for (Stripe keys, GROQ/GEMINI
+#      key, etc — see .env.example at repo root for the full list)
+#   4. Deploy. All four services + database + redis provision together and
+#      DATABASE_URL / REDIS_URL are wired automatically via fromService/
+#      fromDatabase below — you do not set those two by hand.
+#
+# Note on free tier: PyTorch + FAISS need real memory headroom. Render's
+# free web-service tier (512MB) will likely OOM on CNN inference — use at
+# least the Starter plan for the `omniscale-worker` service specifically.
+
+databases:
+  - name: omniscale-postgres
+    plan: starter
+    databaseName: omniscale
+    user: omniscale
+
+services:
+  - type: redis
+    name: omniscale-redis
+    plan: starter
+    ipAllowList: []
+
+  - type: web
+    name: omniscale-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /healthz
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: omniscale-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: omniscale-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        sync: false # set to your Vercel URL, e.g. https://omniscale.vercel.app
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_ID_PRO
+        sync: false
+      - key: STRIPE_PRICE_ID_ENTERPRISE
+        sync: false
+      - key: FRONTEND_SUCCESS_URL
+        sync: false # e.g. https://omniscale.vercel.app/billing/success
+      - key: FRONTEND_CANCEL_URL
+        sync: false # e.g. https://omniscale.vercel.app/billing/cancel
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: worker
+    name: omniscale-worker
+    runtime: docker
+    dockerfilePath: ./Dockerfile.worker
+    plan: starter # bump if you hit OOM on CNN inference
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: omniscale-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: omniscale-redis
+          property: connectionString
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: omniscale-backend
+          envVarKey: SECRET_KEY
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+
+  - type: worker
+    name: omniscale-beat
+    runtime: docker
+    dockerfilePath: ./Dockerfile.worker
+    dockerCommand: "celery -A backend.celery_app beat --loglevel=info"
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: omniscale-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: omniscale-redis
+          property: connectionString

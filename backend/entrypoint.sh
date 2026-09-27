@@ -15,7 +15,8 @@ import time
 import psycopg2
 import os
 
-url = os.environ.get("DATABASE_URL", "").replace("postgresql+asyncpg", "postgresql")
+url = os.environ.get("DATABASE_URL", "")
+url = url.replace("postgresql+asyncpg", "postgresql").replace("postgres://", "postgresql://", 1)
 for attempt in range(30):
     try:
         conn = psycopg2.connect(url)
