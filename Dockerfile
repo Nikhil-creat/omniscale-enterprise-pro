@@ -1,7 +1,7 @@
 # OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
 # Multi-stage build: slim final image, no build toolchain left behind.
 
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 WORKDIR /build
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --user -r requirements.txt
 
-FROM python:3.11-slim AS runtime
+FROM python:3.14-slim AS runtime
 LABEL maintainer="NIKHIL CHARY SRIRAMOJU" \
       org.opencontainers.image.title="OmniScale Enterprise Pro" \
       org.opencontainers.image.description="Designed and Developed by NIKHIL CHARY SRIRAMOJU"
