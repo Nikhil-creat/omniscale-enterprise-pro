@@ -1,7 +1,7 @@
 # OmniScale Enterprise Pro — Designed and Developed by NIKHIL CHARY SRIRAMOJU
 # Celery worker image — shares the backend dependency set.
 
-FROM python:3.11-slim AS builder
+FROM python:3.15-slim AS builder
 WORKDIR /build
 ENV PIP_NO_CACHE_DIR=1
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc \
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 COPY requirements.txt .
 RUN pip install --user -r requirements.txt
 
-FROM python:3.11-slim AS runtime
+FROM python:3.15-slim AS runtime
 LABEL maintainer="NIKHIL CHARY SRIRAMOJU"
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH=/root/.local/bin:$PATH
